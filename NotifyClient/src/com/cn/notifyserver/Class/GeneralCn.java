@@ -36,7 +36,7 @@ public class GeneralCn {
         try {
 
             SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(phoneNumber, null, "-12.1203998;-77.03025556", null,null);
+            sms.sendTextMessage(phoneNumber, null, messageBody, null,null);
 
         } catch (Exception e) {
             // TODO: handle exception

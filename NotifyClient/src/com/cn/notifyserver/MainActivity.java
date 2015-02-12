@@ -33,7 +33,7 @@ public class MainActivity extends Activity
 
             new EscucharMensaje().execute();
             timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-            customHandler.postDelayed(this, 20000);
+            customHandler.postDelayed(this, 3000);
         }
     };
 
@@ -84,7 +84,7 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPostExecute(Void aVoid){
-            Toast.makeText(getApplicationContext(), "Busqueda finalizada mensaje: "+cgeneral.phoneNumber +" Posición: "+ms.messageBody, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Resultado - Nº: "+cgeneral.phoneNumber +" - Posición: "+ms.messageBody, Toast.LENGTH_SHORT).show();
         }
     }
 }
