@@ -40,6 +40,7 @@ public class MainActivity extends Activity
 			customHandler.postDelayed(updateTimerThread, 100);
 		}
 		else{
+			this.finish();
 			//Inicia opción de servidor
 		}
 	}
