@@ -9,7 +9,8 @@ import com.cn.notifyserver.Class.*;
 public class MainActivity extends Activity
 {
     /** Called when the activity is first created. */
-    GeneralCn cgeneral;
+ 	boolean isServerClient=false;
+	GeneralCn cgeneral;
     long timeInMilliseconds = 0L;
     MiServicioGps ms;
     private long startTime = 0L;
@@ -18,16 +19,45 @@ public class MainActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        ms= new MiServicioGps(MainActivity.this.getApplicationContext());
-        cgeneral= new GeneralCn(this);
-        ms.setCoordenadas();
-        startTime = SystemClock.uptimeMillis();
-        customHandler.postDelayed(updateTimerThread, 100);
+        
+		if(isServerClient)
+		{
+			
+		}
+		else{
+			
+			setContentView(R.layout.main);	
+		}
     }
-
-
+	
+	public void OnSaveOption(View view){
+		
+		if(!isServerClient){
+			ms= new MiServicioGps(MainActivity.this.getApplicationContext());
+			cgeneral= new GeneralCn(this);
+			ms.setCoordenadas();
+			startTime = SystemClock.uptimeMillis();
+			customHandler.postDelayed(updateTimerThread, 100);
+		}
+		else{
+			//Inicia opción de servidor
+		}
+	}
+	
+	public void onRadioGuardarOpcion(View view){
+		boolean checked=((RadioButton)view).isChecked();
+		switch(view.getId()){
+			case R.id.rbtnServidor:
+				if(checked)
+					isServerClient=true;
+					break;
+			case R.id.rbtnCliente:
+				if(checked)
+					isServerClient=true;
+				break;
+		}
+	}
+	
     private Runnable updateTimerThread = new Runnable() {
         public void run() {
 

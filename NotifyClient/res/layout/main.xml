@@ -4,5 +4,51 @@
     android:layout_height="fill_parent"
     android:gravity="center"
     android:orientation="vertical" >
-
+	<TextView
+		android:id="@+id/hello"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Notify Me"
+		android:layout_gravity="center"
+		android:textSize="25dp"
+		android:textColor="#4B8AD1"
+		/>
+	
+	<RadioGroup
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center"
+		>
+	<RadioButton
+		android:id="@+id/rbtnServidor"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Servidor"
+		android:textSize="25dp"
+		android:textColor="#4B8AD1"
+		android:onClick="onRadioGuardarOpcion"
+		/>
+	
+	<RadioButton
+		android:id="@+id/rbtnCliente"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Cliente"
+		android:checked="true"
+		android:textSize="25dp"
+		android:textColor="#4B8AD1"
+		android:onClick="onRadioGuardarOpcion"
+	/>
+	</RadioGroup>
+	<Button
+		android:id="@+id/btnsiguiente"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Siguiente"
+		android:layout_gravity="center"
+		android:textSize="25dp"
+		android:onClick="OnSaveOption"
+		android:textColor="#4B8AD1"
+		/>
 </LinearLayout>
