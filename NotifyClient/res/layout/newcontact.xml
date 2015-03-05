@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="4dp"
+	android:paddingRight="4dp"
+	android:paddingTop="4dp"
+	android:paddingBottom="4dp"
+	android:orientation="horizontal">
+    
+    <ImageButton
+        android:id="@+id/btnRegistrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/txtNumeroContacto"
+        android:layout_below="@+id/txtNumeroContacto"
+        android:onClick="RegistrarContacto"
+        android:src="@android:drawable/ic_menu_save" />
+
+
+    <EditText
+        android:id="@+id/txtNombreContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:ems="10"
+        android:hint="Nombre contacto"
+        android:inputType="textPersonName"
+        android:focusable="true"
+        android:maxLength="10"
+        />
+
+    <EditText
+        android:id="@+id/txtNumeroContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txtNombreContacto"
+        android:ems="10"
+        android:hint="Número"
+        android:inputType="phone"
+        android:maxLength="9"/>
+</RelativeLayout>

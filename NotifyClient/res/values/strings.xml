@@ -3,5 +3,5 @@
 
     <string name="hello">Notify Me</string>
     <string name="app_name">Notify Me</string>
-
+	<string name="title_newcontact">Nuevo</string>
 </resources>

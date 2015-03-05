@@ -4,30 +4,31 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.telephony.gsm.SmsManager;
-import android.util.Log;
 import android.widget.Toast;
+import android.util.Log;
 
 /**
- * Created by CN on 16/10/2014.
+ * Created by CN on 19/10/2014.
  */
 public class GeneralCn {
+
     private Context ctx;
-    public String phoneNumber;
-    public String messageBody;
+	public String phoneNumber;
+	public String messageBody;
+	
     public GeneralCn( Context ctx){
         this.ctx=ctx;
     }
-
 
     public void sendSMS(String phoneNumber, String message){
         try {
 
             SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(phoneNumber, null, message, null,null);
+            sms.sendTextMessage(phoneNumber, null, message, null, null);
 
         } catch (Exception e) {
             // TODO: handle exception
-            Toast.makeText(ctx.getApplicationContext(), "Error al enviar sms " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText( ctx.getApplicationContext(),"Error al enviar sms "+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -46,13 +47,12 @@ public class GeneralCn {
 
     public String readSMS(){
 
-        String smsContenido= toString();
+        String smsContenido="";
         try {
 
             Uri uri = Uri.parse("content://sms/inbox");
             Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id", "thread_id", "address", "person", "date", "body" }, null,null,null);
             String address="",body="",time="";
-            long messageId = 0;
             long timestamp=0;
             if (cursor != null)
             {
@@ -62,24 +62,26 @@ public class GeneralCn {
                     if (count > 0)
                     {
                         cursor.moveToFirst();
-                        messageId = cursor.getLong(0);
+                        long messageId = cursor.getLong(0);
                         long threadId = cursor.getLong(1);
                         address = cursor.getString(2);
                         long contactId = cursor.getLong(3);
                         String contactId_string = String.valueOf(contactId);
                         body = cursor.getString(5);
-                        if(body.trim().equalsIgnoreCase("."))
-                        {
-                            Log.i("Message", "Delete message" + messageId);
-                            ctx.getContentResolver().delete(Uri.parse("content://sms/" + messageId), "date=?", new String[] { cursor.getString(4) });
-                        }
+						if(body.trim().equalsIgnoreCase(".")){
+							
+							Log.i("Meesage", "Delete message"+messageId);
+							ctx.getContentResolver().delete(Uri.parse("content://sms/"+messageId), "date=?", 
+							new String[] {cursor.getString(4) });	
+						}
+
                     }
                 }
+				
                 finally { cursor.close(); }
-
-                smsContenido = address+ " , " + body;
-                phoneNumber = address;
-                messageBody = body;
+                smsContenido= address+ "|" + body;
+				phoneNumber=address;
+				messageBody=body;
             }
 
 

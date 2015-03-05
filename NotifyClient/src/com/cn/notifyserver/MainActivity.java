@@ -4,6 +4,7 @@ import android.app.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
+import android.content.Intent;
 import com.cn.notifyserver.Class.*;
 
 public class MainActivity extends Activity
@@ -42,6 +43,8 @@ public class MainActivity extends Activity
 		else{
 			this.finish();
 			//Inicia opción de servidor
+		Intent serverActivity= new Intent(this, ServerActivity.class);
+		startActivity(serverActivity);
 		}
 	}
 	
