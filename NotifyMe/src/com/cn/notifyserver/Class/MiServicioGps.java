@@ -19,7 +19,7 @@ public class MiServicioGps extends Service implements LocationListener {
     double longitud;
     LocationManager locationManager;
     Location location;
-    boolean gpsActivo;
+    public boolean gpsActivo;
     public String messageBody;
 
     public MiServicioGps()

@@ -21,6 +21,8 @@ public class MainActivity extends Activity
     private Handler customHandler = new Handler();
 
     AlertDialog.Builder dlConfirmacion;
+    AlertDialog alertActiveGPS = null;
+
     Button btnSiguiente;
     RadioButton rbtnServidor, rbtnCliente;
     String messageTitle="Estas seguro de configurar como Cliente?";
@@ -45,18 +47,26 @@ public class MainActivity extends Activity
             else{
 
                 if(ms==null){
-					
+
                     ms = new MiServicioGps(MainActivity.this.getApplicationContext());
-                    cgeneral= new GeneralCn(this);
+                    if(!ms.gpsActivo)
+						AlertNoGps();
+                        
+
+                    if(cgeneral==null)
+                        cgeneral= new GeneralCn(this);
                     ms.setCoordenadas();
                     startTime = SystemClock.uptimeMillis();
                     customHandler.postDelayed(updateTimerThread, 100);
 					
-                }else
+                }else{
+
+                    if(!ms.gpsActivo)
+						AlertNoGps();
+                        
                     ms.setCoordenadas();
-
+                }
             }
-
 		}
 		else{
 
@@ -70,19 +80,24 @@ public class MainActivity extends Activity
             dlConfirmacion.setCancelable(false);
 
             AlertDialog.Builder aceptar = dlConfirmacion.setPositiveButton("Aceptar", 
-            new DialogInterface.OnClickListener() {
+			new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogo, int id) {
                     if(!isServerClient){
 
-                        manager.insertarParameter("config", "cliente");
+                
                         ms = new MiServicioGps(MainActivity.this.getApplicationContext());
-                        cgeneral= new GeneralCn(MainActivity.this);
-                        ms.setCoordenadas();
-                        startTime = SystemClock.uptimeMillis();
-                        customHandler.postDelayed(updateTimerThread, 100);
-                        btnSiguiente.setVisibility(View.INVISIBLE);
-                        rbtnServidor.setVisibility(View.INVISIBLE);
-                        rbtnCliente.setVisibility(View.INVISIBLE);
+                         if(!ms.gpsActivo)
+							 AlertNoGps();
+                        else{    
+							manager.insertarParameter("config", "cliente");
+                        	cgeneral= new GeneralCn(MainActivity.this);
+                        	ms.setCoordenadas();
+                        	startTime = SystemClock.uptimeMillis();
+                        	customHandler.postDelayed(updateTimerThread, 100);
+                        	btnSiguiente.setVisibility(View.INVISIBLE);
+                        	rbtnServidor.setVisibility(View.INVISIBLE);
+                        	rbtnCliente.setVisibility(View.INVISIBLE);
+						}
                     }
                     else{
 
@@ -94,15 +109,35 @@ public class MainActivity extends Activity
                 }
             });
         
-        dlConfirmacion.setNegativeButton("Cancelar", 
-        new DialogInterface.OnClickListener() {
+            dlConfirmacion.setNegativeButton("Cancelar",  
+			new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogo, int id) {
                 
-            }
-        });
+                }
+            });
+
+	     }
+		 
 		}
-    }
-	
+
+      private void AlertNoGps() {
+		  final AlertDialog.Builder builderGps = new AlertDialog.Builder(this);
+		  builderGps.setMessage("El sistema GPS esta desactivado, se tiene que activar")
+			  .setCancelable(false)
+			  .setPositiveButton("Ajustes", new DialogInterface.OnClickListener() {
+				  public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+					  startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+					  }
+			  }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
+				  public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id){
+					  alertActiveGPS.show(); 
+				  }
+			  });
+		  alertActiveGPS = builderGps.create();
+		  alertActiveGPS.show();           
+     }
+
+ 
 	public void OnSaveOption(View view){
 		dlConfirmacion.setMessage(messageTitle);
 		dlConfirmacion.show();
