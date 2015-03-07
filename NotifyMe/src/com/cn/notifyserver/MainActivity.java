@@ -45,7 +45,15 @@ public class MainActivity extends Activity
                 startActivity(serverActivity);
             }
             else{
-
+				
+				setContentView(R.layout.main);
+				btnSiguiente= (Button) findViewById(R.id.btnsiguiente);
+				rbtnServidor= (RadioButton) findViewById(R.id.rbtnServidor);
+				rbtnCliente= (RadioButton) findViewById(R.id.rbtnCliente);
+				btnSiguiente.setVisibility(View.INVISIBLE);
+				rbtnServidor.setVisibility(View.INVISIBLE);
+				rbtnCliente.setVisibility(View.INVISIBLE);
+				
                 if(ms==null){
 
                     ms = new MiServicioGps(MainActivity.this.getApplicationContext());
@@ -219,7 +227,7 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPostExecute(Void aVoid){
-            Toast.makeText(getApplicationContext(), "Resultado - Nº: "+cgeneral.phoneNumber +" - Posición: "+ms.messageBody, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Nº: "+cgeneral.phoneNumber +" - : "+ms.messageBody, Toast.LENGTH_SHORT).show();
         }
     }
 }
