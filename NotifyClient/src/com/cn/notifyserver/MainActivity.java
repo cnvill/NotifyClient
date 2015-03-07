@@ -6,7 +6,8 @@ import android.view.*;
 import android.widget.*;
 import android.content.Intent;
 import com.cn.notifyserver.Class.*;
-
+import com.cn.notifyserver.BD.DataBaseManager;
+import android.database.Cursor;
 public class MainActivity extends Activity
 {
     /** Called when the activity is first created. */
@@ -17,13 +18,34 @@ public class MainActivity extends Activity
     private long startTime = 0L;
     private Handler customHandler = new Handler();
 
+    private DataBaseManager manager;
+    Cursor cursor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-		if(isServerClient)
+        manager= new DataBaseManager(this);
+
+		if(manager.GetConfigNotify("config"))
 		{
-			
+			if("servidor"==manager.GetConfigNotifyOption("config")){
+                Intent serverActivity= new Intent(this, ServerActivity.class);
+                startActivity(serverActivity);
+            }
+            else{
+
+                if(ms==null){
+                    ms = new MiServicioGps(MainActivity.this.getApplicationContext());
+                    cgeneral= new GeneralCn(this);
+                    ms.setCoordenadas();
+                    startTime = SystemClock.uptimeMillis();
+                    customHandler.postDelayed(updateTimerThread, 100);
+                }else
+                    ms.setCoordenadas();
+
+            }
+
 		}
 		else{
 			
@@ -34,17 +56,21 @@ public class MainActivity extends Activity
 	public void OnSaveOption(View view){
 		
 		if(!isServerClient){
-			ms= new MiServicioGps(MainActivity.this.getApplicationContext());
+
+            manager.insertarParameter("config", "cliente");
+			ms = new MiServicioGps(MainActivity.this.getApplicationContext());
 			cgeneral= new GeneralCn(this);
 			ms.setCoordenadas();
 			startTime = SystemClock.uptimeMillis();
 			customHandler.postDelayed(updateTimerThread, 100);
 		}
 		else{
+
+            manager.insertarParameter("config", "servidor");
 			this.finish();
 			//Inicia opción de servidor
-		Intent serverActivity= new Intent(this, ServerActivity.class);
-		startActivity(serverActivity);
+    		Intent serverActivity= new Intent(this, ServerActivity.class);
+    		startActivity(serverActivity);
 		}
 	}
 	
@@ -57,7 +83,7 @@ public class MainActivity extends Activity
 					break;
 			case R.id.rbtnCliente:
 				if(checked)
-					isServerClient=true;
+					isServerClient=false;
 				break;
 		}
 	}

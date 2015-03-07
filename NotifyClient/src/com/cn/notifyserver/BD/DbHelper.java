@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DbHelper extends SQLiteOpenHelper{
 
-    private static final String dbName="bdLocation.sqlite";
+    private static final String dbName="bdNotifyMe.sqlite";
     private static final int dbSchemeVersion=1;
 
     public DbHelper(Context context) {
@@ -23,7 +23,8 @@ public class DbHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
         // TODO Auto-generated method stub
 
-        db.execSQL(DataBaseManager.createTable);
+        db.execSQL(DataBaseManager.createTablePosition);
+        db.execSQL(DataBaseManager.createTableParameter);
     }
 
     @Override
