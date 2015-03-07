@@ -29,18 +29,22 @@ public class MainActivity extends Activity
 
 		if(manager.GetConfigNotify("config"))
 		{
-			if("servidor"==manager.GetConfigNotifyOption("config")){
+		
+			if("servidor".equalsIgnoreCase(manager.GetConfigNotifyOption("config"))){
+				this.finish();
                 Intent serverActivity= new Intent(this, ServerActivity.class);
                 startActivity(serverActivity);
             }
             else{
 
                 if(ms==null){
+					
                     ms = new MiServicioGps(MainActivity.this.getApplicationContext());
                     cgeneral= new GeneralCn(this);
                     ms.setCoordenadas();
                     startTime = SystemClock.uptimeMillis();
                     customHandler.postDelayed(updateTimerThread, 100);
+					
                 }else
                     ms.setCoordenadas();
 
