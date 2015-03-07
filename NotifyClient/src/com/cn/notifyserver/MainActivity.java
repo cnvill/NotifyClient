@@ -8,6 +8,8 @@ import android.content.Intent;
 import com.cn.notifyserver.Class.*;
 import com.cn.notifyserver.BD.DataBaseManager;
 import android.database.Cursor;
+import android.content.DialogInterface;
+
 public class MainActivity extends Activity
 {
     /** Called when the activity is first created. */
@@ -17,6 +19,11 @@ public class MainActivity extends Activity
     MiServicioGps ms;
     private long startTime = 0L;
     private Handler customHandler = new Handler();
+
+    AlertDialog.Builder dlConfirmacion;
+    Button btnSiguiente;
+    RadioButton rbtnServidor, rbtnCliente;
+    String messageTitle="Estas seguro de configurar como Cliente?";
 
     private DataBaseManager manager;
     Cursor cursor;
@@ -52,42 +59,71 @@ public class MainActivity extends Activity
 
 		}
 		else{
+
+			setContentView(R.layout.main);
+            btnSiguiente= (Button) findViewById(R.id.btnsiguiente);
+            rbtnServidor= (RadioButton) findViewById(R.id.rbtnServidor);
+            rbtnCliente= (RadioButton) findViewById(R.id.rbtnCliente);
+            dlConfirmacion = new AlertDialog.Builder(this);
 			
-			setContentView(R.layout.main);	
+            dlConfirmacion.setTitle(".:: Aviso");
+            dlConfirmacion.setCancelable(false);
+
+            AlertDialog.Builder aceptar = dlConfirmacion.setPositiveButton("Aceptar", 
+            new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogo, int id) {
+                    if(!isServerClient){
+
+                        manager.insertarParameter("config", "cliente");
+                        ms = new MiServicioGps(MainActivity.this.getApplicationContext());
+                        cgeneral= new GeneralCn(MainActivity.this);
+                        ms.setCoordenadas();
+                        startTime = SystemClock.uptimeMillis();
+                        customHandler.postDelayed(updateTimerThread, 100);
+                        btnSiguiente.setVisibility(View.INVISIBLE);
+                        rbtnServidor.setVisibility(View.INVISIBLE);
+                        rbtnCliente.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+
+                        manager.insertarParameter("config", "servidor");
+                        MainActivity.this.finish();
+                        Intent serverActivity= new Intent(MainActivity.this, ServerActivity.class);
+                        startActivity(serverActivity);
+                    }                   
+                }
+            });
+        
+        dlConfirmacion.setNegativeButton("Cancelar", 
+        new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogo, int id) {
+                
+            }
+        });
 		}
     }
 	
 	public void OnSaveOption(View view){
-		
-		if(!isServerClient){
-
-            manager.insertarParameter("config", "cliente");
-			ms = new MiServicioGps(MainActivity.this.getApplicationContext());
-			cgeneral= new GeneralCn(this);
-			ms.setCoordenadas();
-			startTime = SystemClock.uptimeMillis();
-			customHandler.postDelayed(updateTimerThread, 100);
-		}
-		else{
-
-            manager.insertarParameter("config", "servidor");
-			this.finish();
-			//Inicia opción de servidor
-    		Intent serverActivity= new Intent(this, ServerActivity.class);
-    		startActivity(serverActivity);
-		}
+		dlConfirmacion.setMessage(messageTitle);
+		dlConfirmacion.show();
 	}
 	
 	public void onRadioGuardarOpcion(View view){
 		boolean checked=((RadioButton)view).isChecked();
 		switch(view.getId()){
 			case R.id.rbtnServidor:
-				if(checked)
-					isServerClient=true;
+				if(checked){
+                    messageTitle="Estas seguro de configurar como Servidor?";
+                    isServerClient=true;
+                }
+					
 					break;
 			case R.id.rbtnCliente:
-				if(checked)
-					isServerClient=false;
+				if(checked){
+                    messageTitle="Estas seguro de configurar como Cliente?";
+                    isServerClient=false;
+                }
+					
 				break;
 		}
 	}
