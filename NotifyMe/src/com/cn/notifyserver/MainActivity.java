@@ -101,7 +101,7 @@ public class MainActivity extends Activity
                         	cgeneral= new GeneralCn(MainActivity.this);
                         	ms.setCoordenadas();
                         	startTime = SystemClock.uptimeMillis();
-                        	customHandler.postDelayed(updateTimerThread, 100);
+                        	customHandler.postDelayed(updateTimerThread, 200);
                         	btnSiguiente.setVisibility(View.INVISIBLE);
                         	rbtnServidor.setVisibility(View.INVISIBLE);
                         	rbtnCliente.setVisibility(View.INVISIBLE);
@@ -203,8 +203,8 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPreExecute(){
-            Toast.makeText(getApplicationContext(), "Buscando ultima posición ...", 
-			Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Buscando ultima posición ...", 
+			//Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -227,7 +227,7 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPostExecute(Void aVoid){
-            Toast.makeText(getApplicationContext(), "Nº: "+cgeneral.phoneNumber +" - : "+ms.messageBody, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Posición: "+ms.messageBody, Toast.LENGTH_SHORT).show();
         }
     }
 }

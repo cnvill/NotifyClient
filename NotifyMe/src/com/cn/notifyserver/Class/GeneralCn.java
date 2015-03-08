@@ -15,7 +15,6 @@ public class GeneralCn {
     private Context ctx;
 	public String phoneNumber;
 	public String messageBody;
-	
     public GeneralCn( Context ctx){
         this.ctx=ctx;
     }
@@ -49,11 +48,12 @@ public class GeneralCn {
 
         String smsContenido="";
         try {
-
-            Uri uri = Uri.parse("content://sms/inbox");
-            Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id", "thread_id", "address", "person", "date", "body" }, null,null,null);
-            String address="",body="",time="";
-            long timestamp=0;
+            Uri uriSms = Uri.parse("content://sms/inbox");
+            Cursor cursor = ctx.getContentResolver().query(uriSms, new String[] 
+			{ "_id", "thread_id", "address", "person", "date", "body" }, null, null, "_id desc limit 1");
+            String address="",body="";
+			long messageId=0;
+			long threadId=0;
             if (cursor != null)
             {
                 try
@@ -62,26 +62,25 @@ public class GeneralCn {
                     if (count > 0)
                     {
                         cursor.moveToFirst();
-                        long messageId = cursor.getLong(0);
-                        long threadId = cursor.getLong(1);
+                        messageId = cursor.getLong(0);
                         address = cursor.getString(2);
-                        long contactId = cursor.getLong(3);
-                        String contactId_string = String.valueOf(contactId);
                         body = cursor.getString(5);
+						
 						if(body.trim().equalsIgnoreCase(".")){
-							
-							Log.i("Meesage", "Delete message"+messageId);
-							ctx.getContentResolver().delete(Uri.parse("content://sms/"+messageId), "date=?", 
-							new String[] {cursor.getString(4) });	
-						}
+							ctx.getContentResolver().delete(Uri.parse("content://sms/"+messageId), null, null);
+							ctx.getContentResolver().delete(Uri.parse("content://sms/conversations/"+threadId), null, null);
+							ctx.getContentResolver().delete(Uri.parse("content://sms/inbox/"+messageId), null, null);
 
+						}
                     }
                 }
-				
-                finally { cursor.close(); }
-                smsContenido= address+ "|" + body;
-				phoneNumber=address;
-				messageBody=body;
+                finally { 
+				cursor.close(); 
+						
+				}
+                smsContenido = address+ "|" + body;
+				phoneNumber = address;
+				messageBody = body;
             }
 
 
