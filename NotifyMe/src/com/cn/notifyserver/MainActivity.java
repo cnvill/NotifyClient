@@ -214,7 +214,7 @@ public class MainActivity extends Activity
                 cgeneral.readSMS();
                 ms.setCoordenadas();
                 if(cgeneral.messageBody.trim().equalsIgnoreCase("."))
-                    cgeneral.sendSMS(cgeneral.phoneNumber, ms.messageBody);
+                    cgeneral.sendSMS(cgeneral.phoneNumber, cgeneral.phoneNumber+"|"+ms.messageBody);
                 timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
 
             } catch (Exception e) {

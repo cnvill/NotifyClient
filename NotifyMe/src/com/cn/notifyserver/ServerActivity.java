@@ -17,6 +17,15 @@ import com.cn.notifyserver.BD.DataBaseManager;
 import com.cn.notifyserver.Class.GeneralCn;
 import java.util.List;
 
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+import java.text.*;
+import java.util.Date;
+
 public class ServerActivity extends Activity
 {
     private DataBaseManager manager;
@@ -31,7 +40,12 @@ public class ServerActivity extends Activity
     private ProgressDialog progress;
     Handler updateBarHandler;
 
-  
+    //Variables for WS
+    String NAMESPACE = "http://tempuri.org/";
+    String URL="http://104.41.33.66/ws/NotifyMeWS.asmx";
+    String METHOD_NAME = "Insert";
+    String SOAP_ACTION = "http://tempuri.org/Insert";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,10 +204,12 @@ public class ServerActivity extends Activity
             
             smsRespuesta = cgeneral.readSMS();
             String[] respuesta = smsRespuesta.split("\\|");
-            if(respuesta.length == 3){
-              	numeroRetorno =respuesta[0];
-                latitud = respuesta[1];
-                longitud = respuesta[2];
+			String nroTelfServidor="";
+            if(respuesta.length == 4){
+              	numeroRetorno = respuesta[0];
+				nroTelfServidor = respuesta[1];
+                latitud = respuesta[2];
+                longitud = respuesta[3];
                 if(numeroEnvio.trim().equalsIgnoreCase(numeroRetorno.trim())) {
                     
                     Uri location = Uri.parse("geo:<"+latitud+">, <"+longitud+">?q=<"+latitud + ">, <" + longitud +">(Posición)");
@@ -206,6 +222,29 @@ public class ServerActivity extends Activity
                     if (isIntentSafe)
                         startActivity(mapIntent);
 
+                    try{
+
+                    SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+						request.addProperty("phone", nroTelfServidor);
+                    request.addProperty("latitude", latitud);
+                    request.addProperty("longitude", longitud);
+					DateFormat dateFormat= new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
+					Date date=new Date();
+                    request.addProperty("registerDate", dateFormat.format(date));
+                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                    envelope.dotNet = true;
+                    envelope.setOutputSoapObject(request);
+
+                    HttpTransportSE transporte = new HttpTransportSE(URL);
+                    transporte.call(SOAP_ACTION, envelope);
+
+                    SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
+                     if(resultado_xml.toString().equalsIgnoreCase("true"))
+                        Toast.makeText(getApplicationContext(), "Se registro en historial", Toast.LENGTH_SHORT).show();
+
+                    }catch(Exception ex){
+
+                    } 
                }
                else
                   Toast.makeText(getApplicationContext(), "La respuesta no es del cliente solicitado", Toast.LENGTH_SHORT).show();
