@@ -35,14 +35,14 @@ public class ServerActivity extends Activity
     EditText txtBuscar;
     ImageButton btnbuscar, btnNuevo;
     GeneralCn cgeneral;
-    String numeroRetorno, numeroEnvio, smsRespuesta, contactoId, longitud, latitud;
+    String numeroRetorno, numeroEnvio, smsRespuesta, contactoId, longitud="0", latitud="0";
     AlertDialog.Builder dlConfirmacion;
     private ProgressDialog progress;
     Handler updateBarHandler;
 
     //Variables for WS
     String NAMESPACE = "http://tempuri.org/";
-    String URL="http://104.41.33.66/ws/NotifyMeWS.asmx";
+    String URL_WS="http://104.41.33.66/ws/NotifyMeWS.asmx";
     String METHOD_NAME = "Insert";
     String SOAP_ACTION = "http://tempuri.org/Insert";
 
@@ -122,7 +122,7 @@ public class ServerActivity extends Activity
     }
 
     public void NuevoContacto(View v){
-        Intent nuevo=new Intent(this, NewContact.class);
+		Intent nuevo=new Intent(this, NewContact.class);
         startActivityForResult(nuevo, 2);
     }
 
@@ -212,6 +212,64 @@ public class ServerActivity extends Activity
                 longitud = respuesta[3];
                 if(numeroEnvio.trim().equalsIgnoreCase(numeroRetorno.trim())) {
                     
+
+					SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+					PropertyInfo phoneServer= new PropertyInfo();
+					phoneServer.setName("phoneServer");
+					phoneServer.setValue(nroTelfServidor.replace("+51",""));
+					phoneServer.setType(String.class);
+
+					PropertyInfo phoneClient= new PropertyInfo();
+					phoneClient.setName("phoneClient");
+					phoneClient.setValue(numeroEnvio.replace("+51",""));
+					phoneClient.setType(String.class);
+
+					PropertyInfo pLatitud= new PropertyInfo();
+					pLatitud.setName("latitude");
+					pLatitud.setValue(latitud);
+					pLatitud.setType(Float.class);
+
+
+					PropertyInfo pLongitud= new PropertyInfo();
+					pLongitud.setName("longitude");
+					pLongitud.setValue(longitud);
+					pLongitud.setType(Float.class);
+
+
+					DateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+					Date date=new Date();
+
+					PropertyInfo registerDate= new PropertyInfo();
+					registerDate.setName("registerDate");
+					registerDate.setValue(dateFormat.format(date).toString());
+					registerDate.setType(String.class);
+
+
+					request.addProperty(phoneServer);
+					request.addProperty(phoneClient);
+					request.addProperty(pLatitud);
+					request.addProperty(pLongitud);
+					request.addProperty(registerDate);
+
+					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);
+					envelope.dotNet = true;
+
+					envelope.setOutputSoapObject(request);
+					HttpTransportSE transporte = new HttpTransportSE(URL_WS);
+
+					try{
+						StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
+						StrictMode.setThreadPolicy(policy);
+						transporte.call(SOAP_ACTION, envelope);
+						SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
+
+						Toast.makeText(getApplicationContext(), "Save in History "+resultado_xml .toString(), Toast.LENGTH_SHORT).show();
+
+					}catch(Exception ex){
+						Toast.makeText(getApplicationContext(), "WS Error "+ex.getMessage(), Toast.LENGTH_SHORT).show();
+					}
+					
                     Uri location = Uri.parse("geo:<"+latitud+">, <"+longitud+">?q=<"+latitud + ">, <" + longitud +">(Posición)");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
 
@@ -222,29 +280,7 @@ public class ServerActivity extends Activity
                     if (isIntentSafe)
                         startActivity(mapIntent);
 
-                    try{
-
-                    SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-						request.addProperty("phone", nroTelfServidor);
-                    request.addProperty("latitude", latitud);
-                    request.addProperty("longitude", longitud);
-					DateFormat dateFormat= new SimpleDateFormat("dd/MM/YYYY HH:mm:ss");
-					Date date=new Date();
-                    request.addProperty("registerDate", dateFormat.format(date));
-                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-                    envelope.dotNet = true;
-                    envelope.setOutputSoapObject(request);
-
-                    HttpTransportSE transporte = new HttpTransportSE(URL);
-                    transporte.call(SOAP_ACTION, envelope);
-
-                    SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
-                     if(resultado_xml.toString().equalsIgnoreCase("true"))
-                        Toast.makeText(getApplicationContext(), "Se registro en historial", Toast.LENGTH_SHORT).show();
-
-                    }catch(Exception ex){
-
-                    } 
+                     
                }
                else
                   Toast.makeText(getApplicationContext(), "La respuesta no es del cliente solicitado", Toast.LENGTH_SHORT).show();
