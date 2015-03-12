@@ -258,17 +258,6 @@ public class ServerActivity extends Activity
 					envelope.setOutputSoapObject(request);
 					HttpTransportSE transporte = new HttpTransportSE(URL_WS);
 
-					try{
-						StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
-						StrictMode.setThreadPolicy(policy);
-						transporte.call(SOAP_ACTION, envelope);
-						SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
-
-						Toast.makeText(getApplicationContext(), "Save in History "+resultado_xml .toString(), Toast.LENGTH_SHORT).show();
-
-					}catch(Exception ex){
-						Toast.makeText(getApplicationContext(), "WS Error "+ex.getMessage(), Toast.LENGTH_SHORT).show();
-					}
 					
                     Uri location = Uri.parse("geo:<"+latitud+">, <"+longitud+">?q=<"+latitud + ">, <" + longitud +">(Posición)");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
@@ -280,6 +269,17 @@ public class ServerActivity extends Activity
                     if (isIntentSafe)
                         startActivity(mapIntent);
 
+					try{
+						StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
+						StrictMode.setThreadPolicy(policy);
+						transporte.call(SOAP_ACTION, envelope);
+						SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
+
+						Toast.makeText(getApplicationContext(), "Historial "+resultado_xml .toString(), Toast.LENGTH_SHORT).show();
+
+					}catch(Exception ex){
+						Toast.makeText(getApplicationContext(), "WS "+ex.getMessage(), Toast.LENGTH_SHORT).show();
+					}
                      
                }
                else
