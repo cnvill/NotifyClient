@@ -37,6 +37,9 @@ public class MiServicioGps extends Service implements LocationListener {
 
     public void setCoordenadas()
     {
+
+		latitud= latitud==0?location.getLatitude():latitud;
+		longitud=longitud==0?location.getLongitude():longitud;
         messageBody= latitud+"|"+longitud ;
     }
 
