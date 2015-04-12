@@ -85,7 +85,7 @@ public class ServerActivity extends Activity
                     Cursor c = manager.buscarContactoId(contactoId);
                     if (c.moveToFirst()) {
                         numeroEnvio = c.getString(2);
-                        Toast.makeText(getApplicationContext(), " Enviando petición ...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), " Enviando petición ..."+numeroEnvio, Toast.LENGTH_SHORT).show();
                         cgeneral.sendSMS(numeroEnvio, ".");
                         numeroEnvio = "+51" + numeroEnvio;
                         new EnvioRecepcionSms().execute();
@@ -201,7 +201,7 @@ public class ServerActivity extends Activity
 
         @Override
         protected void onPostExecute(Void aVoid){
-            
+          try{
             smsRespuesta = cgeneral.readSMS();
             String[] respuesta = smsRespuesta.split("\\|");
 			String nroTelfServidor="";
@@ -288,6 +288,11 @@ public class ServerActivity extends Activity
             else
               Toast.makeText(getApplicationContext(), ":( Se excedio el tiempo de respuesta no se puedo recuperar la posición ", Toast.LENGTH_SHORT).show();
 
+
+		  }catch(Exception ex){
+			  Toast.makeText(getApplicationContext(), ""+ex.getMessage(), Toast.LENGTH_SHORT).show();
+			  
+		  }
         }
     }
     

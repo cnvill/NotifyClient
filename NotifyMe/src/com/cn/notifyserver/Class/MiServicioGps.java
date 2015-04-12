@@ -20,7 +20,7 @@ public class MiServicioGps extends Service implements LocationListener {
     LocationManager locationManager;
     Location location;
     public boolean gpsActivo;
-    public String messageBody;
+    public String positionBody;
 
     public MiServicioGps()
     {
@@ -45,10 +45,12 @@ public class MiServicioGps extends Service implements LocationListener {
 				latitud= latitud==0?location.getLatitude():latitud;
 				longitud=longitud==0?location.getLongitude():longitud;
 			}
+			positionBody= latitud+"|"+longitud ;
+			
 		}catch(Exception ex){
 			
 		}
-		messageBody= latitud+"|"+longitud ;
+		positionBody= latitud+"|"+longitud ;
     }
 
     public void getLocation(){
@@ -83,7 +85,7 @@ public class MiServicioGps extends Service implements LocationListener {
         if(location != null){
             latitud=location.getLatitude();
             longitud=location.getLongitude();
-            messageBody=latitud+"|"+longitud ;
+            positionBody=latitud+"|"+longitud ;
         }
     }
 

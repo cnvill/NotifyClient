@@ -9,16 +9,15 @@ import com.cn.notifyserver.Class.*;
 import com.cn.notifyserver.BD.DataBaseManager;
 import android.database.Cursor;
 import android.content.DialogInterface;
+import java.util.*;
 
 public class MainActivity extends Activity
 {
     /** Called when the activity is first created. */
  	boolean isServerClient=false;
 	GeneralCn cgeneral;
-    long timeInMilliseconds = 0L;
     MiServicioGps ms;
-    private long startTime = 0L;
-    private Handler customHandler = new Handler();
+    private Timer timer;
 
     AlertDialog.Builder dlConfirmacion;
     AlertDialog alertActiveGPS = null;
@@ -64,9 +63,9 @@ public class MainActivity extends Activity
                     if(cgeneral==null)
                         cgeneral= new GeneralCn(this);
                     ms.setCoordenadas();
-                    startTime = SystemClock.uptimeMillis();
-                    customHandler.postDelayed(updateTimerThread, 100);
-					
+					timer= new Timer();
+                    UpdateTimerTask update= new UpdateTimerTask();
+					timer.scheduleAtFixedRate(update, 0, 1000);
                 }else{
 
                     if(!ms.gpsActivo)
@@ -100,8 +99,9 @@ public class MainActivity extends Activity
 							manager.insertarParameter("config", "cliente");
                         	cgeneral= new GeneralCn(MainActivity.this);
                         	ms.setCoordenadas();
-                        	startTime = SystemClock.uptimeMillis();
-                        	customHandler.postDelayed(updateTimerThread, 200);
+							timer= new Timer();
+                        	UpdateTimerTask update= new UpdateTimerTask();
+							timer.scheduleAtFixedRate(update, 0, 1000);
                         	btnSiguiente.setVisibility(View.INVISIBLE);
                         	rbtnServidor.setVisibility(View.INVISIBLE);
                         	rbtnCliente.setVisibility(View.INVISIBLE);
@@ -171,14 +171,6 @@ public class MainActivity extends Activity
 		}
 	}
 	
-    private Runnable updateTimerThread = new Runnable() {
-        public void run() {
-
-            new EscucharMensaje().execute();
-            timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-            customHandler.postDelayed(this, 3000);
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,9 +181,6 @@ public class MainActivity extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.item) {
             return true;
@@ -199,24 +188,30 @@ public class MainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+
+    public class UpdateTimerTask extends TimerTask{
+        public void run() {
+            new EscucharMensaje().execute();
+        }
+    }
+	
     public class EscucharMensaje extends AsyncTask<Void, Void, Void>{
 
         @Override
         protected void onPreExecute(){
-            //Toast.makeText(getApplicationContext(), "Buscando ultima posición ...", 
-			//Toast.LENGTH_SHORT).show();
+            
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
             try {
 
-                cgeneral.readSMS();
+                cgeneral.readClientSMS();
                 ms.setCoordenadas();
-                if(cgeneral.messageBody.trim().equalsIgnoreCase("."))
-                    cgeneral.sendSMS(cgeneral.phoneNumber, cgeneral.phoneNumber+"|"+ms.messageBody);
-                timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
-
+				
+				if(cgeneral.messageBody.trim().equalsIgnoreCase("."))
+					cgeneral.sendSMS(cgeneral.phoneNumber, cgeneral.phoneNumber+"|"+ms.positionBody);
+   
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -227,7 +222,7 @@ public class MainActivity extends Activity
 
         @Override
         protected void onPostExecute(Void aVoid){
-            Toast.makeText(getApplicationContext(), "Posición: "+ms.messageBody, Toast.LENGTH_SHORT).show();
-        }
+			Toast.makeText(getApplicationContext(), "Punto:"+cgeneral.messageBody+" Nro "+cgeneral.phoneNumber+" Position"+ms.positionBody, Toast.LENGTH_SHORT).show();
+		}
     }
 }
