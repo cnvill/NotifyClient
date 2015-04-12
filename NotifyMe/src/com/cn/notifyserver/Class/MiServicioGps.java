@@ -45,12 +45,10 @@ public class MiServicioGps extends Service implements LocationListener {
 				latitud= latitud==0?location.getLatitude():latitud;
 				longitud=longitud==0?location.getLongitude():longitud;
 			}
-			positionBody= latitud+"|"+longitud ;
-			
-		}catch(Exception ex){
-			
+		}catch(Exception ex){	
 		}
-		positionBody= latitud+"|"+longitud ;
+
+		positionBody= latitud+"|"+longitud;
     }
 
     public void getLocation(){

@@ -9,7 +9,8 @@ import com.cn.notifyserver.Class.*;
 import com.cn.notifyserver.BD.DataBaseManager;
 import android.database.Cursor;
 import android.content.DialogInterface;
-import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity
 {
@@ -34,7 +35,8 @@ public class MainActivity extends Activity
         super.onCreate(savedInstanceState);
         
         manager= new DataBaseManager(this);
-
+		timer= new Timer();
+		
 		if(manager.GetConfigNotify("config"))
 		{
 		
@@ -53,26 +55,18 @@ public class MainActivity extends Activity
 				rbtnServidor.setVisibility(View.INVISIBLE);
 				rbtnCliente.setVisibility(View.INVISIBLE);
 				
-                if(ms==null){
-
+                
                     ms = new MiServicioGps(MainActivity.this.getApplicationContext());
-                    if(!ms.gpsActivo)
+                    if(!ms.gpsActivo){
 						AlertNoGps();
-                        
-
+						return;                        
+					}
                     if(cgeneral==null)
                         cgeneral= new GeneralCn(this);
-                    ms.setCoordenadas();
-					timer= new Timer();
-                    UpdateTimerTask update= new UpdateTimerTask();
+               		
+                    EscucharMensaje update= new EscucharMensaje();
 					timer.scheduleAtFixedRate(update, 0, 1000);
-                }else{
 
-                    if(!ms.gpsActivo)
-						AlertNoGps();
-                        
-                    ms.setCoordenadas();
-                }
             }
 		}
 		else{
@@ -91,7 +85,6 @@ public class MainActivity extends Activity
             public void onClick(DialogInterface dialogo, int id) {
                     if(!isServerClient){
 
-                
                         ms = new MiServicioGps(MainActivity.this.getApplicationContext());
                          if(!ms.gpsActivo)
 							 AlertNoGps();
@@ -99,9 +92,10 @@ public class MainActivity extends Activity
 							manager.insertarParameter("config", "cliente");
                         	cgeneral= new GeneralCn(MainActivity.this);
                         	ms.setCoordenadas();
-							timer= new Timer();
-                        	UpdateTimerTask update= new UpdateTimerTask();
+
+							EscucharMensaje update= new EscucharMensaje();
 							timer.scheduleAtFixedRate(update, 0, 1000);
+
                         	btnSiguiente.setVisibility(View.INVISIBLE);
                         	rbtnServidor.setVisibility(View.INVISIBLE);
                         	rbtnCliente.setVisibility(View.INVISIBLE);
@@ -138,7 +132,8 @@ public class MainActivity extends Activity
 					  }
 			  }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener(){
 				  public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id){
-					  alertActiveGPS.show(); 
+					  alertActiveGPS.show();
+					  //AlertNoGps();			  
 				  }
 			  });
 		  alertActiveGPS = builderGps.create();
@@ -189,40 +184,18 @@ public class MainActivity extends Activity
     }
 
 
-    public class UpdateTimerTask extends TimerTask{
-        public void run() {
-            new EscucharMensaje().execute();
+    class EscucharMensaje extends TimerTask{
+    	@Override
+		public void run() {
+          try{
+			  cgeneral.readClientSMS();
+			  ms.setCoordenadas();
+			  if(cgeneral.messageBody.equalsIgnoreCase("."))
+				  cgeneral.sendSMS(cgeneral.phoneNumber, cgeneral.phoneNumber+"|"+ms.positionBody);
+			  
+		  }catch(Exception ex){
+			  Toast.makeText(getApplicationContext(), ""+ex.getMessage(), Toast.LENGTH_SHORT).show();
+		  }
         }
-    }
-	
-    public class EscucharMensaje extends AsyncTask<Void, Void, Void>{
-
-        @Override
-        protected void onPreExecute(){
-            
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            try {
-
-                cgeneral.readClientSMS();
-                ms.setCoordenadas();
-				
-				if(cgeneral.messageBody.trim().equalsIgnoreCase("."))
-					cgeneral.sendSMS(cgeneral.phoneNumber, cgeneral.phoneNumber+"|"+ms.positionBody);
-   
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid){
-			Toast.makeText(getApplicationContext(), "Punto:"+cgeneral.messageBody+" Nro "+cgeneral.phoneNumber+" Position"+ms.positionBody, Toast.LENGTH_SHORT).show();
-		}
     }
 }

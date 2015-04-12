@@ -13,8 +13,8 @@ import android.util.Log;
 public class GeneralCn {
 
     private Context ctx;
-	public String phoneNumber;
-	public String messageBody;
+	public String phoneNumber="";
+	public String messageBody="";
     public GeneralCn( Context ctx){
         this.ctx=ctx;
     }
@@ -27,7 +27,7 @@ public class GeneralCn {
 
         } catch (Exception e) {
             // TODO: handle exception
-            Toast.makeText( ctx.getApplicationContext(),"Error al enviar sms "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.i("SendSMS","Error al enviar sms "+e.getMessage());
         }
 
     }
@@ -40,7 +40,7 @@ public class GeneralCn {
 
         } catch (Exception e) {
             // TODO: handle exception
-            Toast.makeText( ctx.getApplicationContext(),"Error al enviar sms "+e.getMessage(), Toast.LENGTH_SHORT).show();
+			Log.i("SendSmsByNumber","Error al enviar sms "+e.getMessage());
         }
     }
 
@@ -75,8 +75,8 @@ public class GeneralCn {
             }
 
         } catch (Exception e) {
-            Toast.makeText( ctx.getApplicationContext(),"Error al leer SMS"+e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+			Log.i("readSMS", e.getMessage());
+          }
         return smsContenido;
     }
 	
@@ -112,7 +112,7 @@ public class GeneralCn {
             }
 
         } catch (Exception e) {
-            Toast.makeText( ctx.getApplicationContext(),"Error al leer SMS"+e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+			Log.i("sendClientSMS", e.getMessage());
+		}
     }
 }
