@@ -42,7 +42,7 @@ public class ServerActivity extends Activity
 
     //Variables for WS
     String NAMESPACE = "http://tempuri.org/";
-    String URL_WS="http://104.41.33.66/ws/NotifyMeWS.asmx";
+    String URL_WS="http://cristianvillegas.cloudapp.net/ws/NotifyMeWS.asmx";
     String METHOD_NAME = "Insert";
     String SOAP_ACTION = "http://tempuri.org/Insert";
 
