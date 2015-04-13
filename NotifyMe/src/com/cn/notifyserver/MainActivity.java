@@ -25,6 +25,7 @@ public class MainActivity extends Activity
 
     Button btnSiguiente;
     RadioButton rbtnServidor, rbtnCliente;
+	TextView lblNotifyMe;
     String messageTitle="Estas seguro de configurar como Cliente?";
 
     private DataBaseManager manager;
@@ -48,12 +49,14 @@ public class MainActivity extends Activity
             else{
 				
 				setContentView(R.layout.main);
+				lblNotifyMe=(TextView)findViewById(R.id.helloNotify);
 				btnSiguiente= (Button) findViewById(R.id.btnsiguiente);
 				rbtnServidor= (RadioButton) findViewById(R.id.rbtnServidor);
 				rbtnCliente= (RadioButton) findViewById(R.id.rbtnCliente);
 				btnSiguiente.setVisibility(View.INVISIBLE);
 				rbtnServidor.setVisibility(View.INVISIBLE);
 				rbtnCliente.setVisibility(View.INVISIBLE);
+				lblNotifyMe.setText("Notify Me, Ejecutando en segundo plano ...");
 				
                 
                     ms = new MiServicioGps(MainActivity.this.getApplicationContext());
@@ -72,10 +75,13 @@ public class MainActivity extends Activity
 		else{
 
 			setContentView(R.layout.main);
+			lblNotifyMe=(TextView)findViewById(R.id.helloNotify);
             btnSiguiente= (Button) findViewById(R.id.btnsiguiente);
             rbtnServidor= (RadioButton) findViewById(R.id.rbtnServidor);
             rbtnCliente= (RadioButton) findViewById(R.id.rbtnCliente);
-            dlConfirmacion = new AlertDialog.Builder(this);
+			lblNotifyMe.setText("Notify Me, Ejecutando en segundo plano ...");
+			
+			dlConfirmacion = new AlertDialog.Builder(this);
 			
             dlConfirmacion.setTitle(".:: Aviso");
             dlConfirmacion.setCancelable(false);

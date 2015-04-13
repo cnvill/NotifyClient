@@ -18,7 +18,7 @@ public final class R {
         public static final int btnNuevo=0x7f070006;
         public static final int btnRegistrar=0x7f070009;
         public static final int btnsiguiente=0x7f070003;
-        public static final int hello=0x7f070000;
+        public static final int helloNotify=0x7f070000;
         public static final int item=0x7f07000c;
         public static final int lblMessage=0x7f070007;
         public static final int lvLista=0x7f070008;
