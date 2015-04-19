@@ -7,7 +7,7 @@
 	android:paddingTop="4dp"
 	android:paddingBottom="4dp"
 	android:orientation="horizontal">
-	
+
     <EditText
         android:id="@+id/txtBuscar"
         android:layout_width="wrap_content"
@@ -48,15 +48,41 @@
 		android:text="Seleccione un contacto para enviar una petición"
 		android:textColor="#7493DB"
 		/>
+
+		<ListView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/lvLista"
+			android:layout_below="@+id/lblMessage"
+			android:layout_alignBottom="@+id/btnMap"
+			
+			/>
+		<RelativeLayout
+			android:id="@+id/footerRl"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			>
+
+			<ImageButton
+				android:id="@+id/btnMap"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_alignParentRight="true"
+				android:src="@android:drawable/ic_menu_mylocation"
+				android:onClick="onMap"/>
+			
+			<TextView 
+				android:id="@+id/lblCopyRigth"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_alignParentBottom="true"
+				android:layout_toLeftOf="@+id/btnMap"
+				android:text="By © cristianvillegas 2015"
+				android:textColor="#7493DB"
+			/>
+
+		</RelativeLayout>
 	
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvLista"
-        android:layout_below="@+id/lblMessage"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-	/>
-	
-    
 </RelativeLayout>
