@@ -42,9 +42,9 @@ public class MainActivity extends Activity
 		{
 		
 			if("servidor".equalsIgnoreCase(manager.GetConfigNotifyOption("config"))){
-				this.finish();
                 Intent serverActivity= new Intent(this, ServerActivity.class);
                 startActivity(serverActivity);
+				this.finish();
             }
             else{
 				
@@ -79,7 +79,7 @@ public class MainActivity extends Activity
             btnSiguiente= (Button) findViewById(R.id.btnsiguiente);
             rbtnServidor= (RadioButton) findViewById(R.id.rbtnServidor);
             rbtnCliente= (RadioButton) findViewById(R.id.rbtnCliente);
-			lblNotifyMe.setText("Notify Me, Ejecutando en segundo plano ...");
+			lblNotifyMe.setText("Notify Me");
 			
 			dlConfirmacion = new AlertDialog.Builder(this);
 			
@@ -110,9 +110,9 @@ public class MainActivity extends Activity
                     else{
 
                         manager.insertarParameter("config", "servidor");
-                        MainActivity.this.finish();
                         Intent serverActivity= new Intent(MainActivity.this, ServerActivity.class);
                         startActivity(serverActivity);
+						MainActivity.this.finish();
                     }                   
                 }
             });

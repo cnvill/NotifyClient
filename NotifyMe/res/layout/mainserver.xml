@@ -51,23 +51,16 @@
 
 		<ListView
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
 			android:id="@+id/lvLista"
 			android:layout_below="@+id/lblMessage"
-			android:layout_alignBottom="@+id/btnMap"
-			
+			android:layout_above="@+id/btnMap"
 			/>
-		<RelativeLayout
-			android:id="@+id/footerRl"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentBottom="true"
-			>
 
-			<ImageButton
+		<ImageButton
 				android:id="@+id/btnMap"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_height="50dp"
 				android:layout_alignParentBottom="true"
 				android:layout_alignParentRight="true"
 				android:src="@android:drawable/ic_menu_mylocation"
@@ -75,14 +68,13 @@
 			
 			<TextView 
 				android:id="@+id/lblCopyRigth"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:layout_height="50dp"
+				android:layout_alignParentLeft="true"
 				android:layout_alignParentBottom="true"
-				android:layout_toLeftOf="@+id/btnMap"
+				android:gravity="center"
 				android:text="By © cristianvillegas 2015"
 				android:textColor="#7493DB"
 			/>
 
-		</RelativeLayout>
-	
 </RelativeLayout>
