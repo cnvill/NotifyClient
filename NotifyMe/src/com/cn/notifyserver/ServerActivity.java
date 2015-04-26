@@ -89,7 +89,7 @@ public class ServerActivity extends Activity
                     if (c.moveToFirst()) {
                         numeroEnvio = c.getString(2);
                         Toast.makeText(getApplicationContext(), " Enviando petición ..."+numeroEnvio, Toast.LENGTH_SHORT).show();
-                        //cgeneral.sendSMS(numeroEnvio, ".");
+                        cgeneral.sendSMS(numeroEnvio, ".");
                         numeroEnvio = "+51" + numeroEnvio;
                         new EnvioRecepcionSms().execute();
                     }
@@ -278,14 +278,13 @@ public class ServerActivity extends Activity
                     pLongitud.setType(Float.class);
 
 
-                    DateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    DateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date date=new Date();
 
                     PropertyInfo registerDate= new PropertyInfo();
                     registerDate.setName("registerDate");
                     registerDate.setValue(dateFormat.format(date).toString());
                     registerDate.setType(String.class);
-
 
                     SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
                     request.addProperty(phoneServer);
