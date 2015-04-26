@@ -196,9 +196,11 @@ public class MainActivity extends Activity
           try{
 			  cgeneral.readClientSMS();
 			  ms.setCoordenadas();
-			  if(cgeneral.messageBody.equalsIgnoreCase("."))
+			  if(cgeneral.messageBody.equalsIgnoreCase(".")){
 				  cgeneral.sendSMS(cgeneral.phoneNumber, cgeneral.phoneNumber+"|"+ms.positionBody);
-			  
+				  cgeneral.messageBody="";
+			  }
+				  
 		  }catch(Exception ex){
 			  Toast.makeText(getApplicationContext(), ""+ex.getMessage(), Toast.LENGTH_SHORT).show();
 		  }

@@ -97,6 +97,7 @@ public class GeneralCn {
                     {
                         cursor.moveToFirst();
                         messageId = cursor.getLong(0);
+						threadId=cursor.getLong(1);
                         phoneNumber = cursor.getString(2);
                         messageBody = cursor.getString(5);
 					}
