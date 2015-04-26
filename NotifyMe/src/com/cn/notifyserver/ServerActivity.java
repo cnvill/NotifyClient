@@ -80,6 +80,7 @@ public class ServerActivity extends Activity
                 progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 progress.setProgress(0);
                 progress.setMax(100);
+				progress.setCancelable(false);
                 progress.show();
                 try {
                     Cursor c = manager.buscarContactoId(contactoId);
