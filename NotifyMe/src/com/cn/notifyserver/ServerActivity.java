@@ -25,6 +25,8 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import java.text.*;
 import java.util.Date;
+import java.io.IOException;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class ServerActivity extends Activity
 {
@@ -87,7 +89,7 @@ public class ServerActivity extends Activity
                     if (c.moveToFirst()) {
                         numeroEnvio = c.getString(2);
                         Toast.makeText(getApplicationContext(), " Enviando petición ..."+numeroEnvio, Toast.LENGTH_SHORT).show();
-                        cgeneral.sendSMS(numeroEnvio, ".");
+                        //cgeneral.sendSMS(numeroEnvio, ".");
                         numeroEnvio = "+51" + numeroEnvio;
                         new EnvioRecepcionSms().execute();
                     }
@@ -136,10 +138,10 @@ public class ServerActivity extends Activity
 	}
 	
 	public void onMap(View v){
-		readSavePetition();
+		onGetPetition();
 	}
 	
-	public void readSavePetition(){
+	public void onGetPetition(){
 		try{
 			smsRespuesta = cgeneral.readSMS();
             String[] respuesta = smsRespuesta.split("\\|");
@@ -149,52 +151,9 @@ public class ServerActivity extends Activity
 				nroTelfServidor = respuesta[1];
                 latitud = respuesta[2];
                 longitud = respuesta[3];
-                if(numeroEnvio.trim().equalsIgnoreCase(numeroRetorno.trim())) {
-
-					SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-
-					PropertyInfo phoneServer= new PropertyInfo();
-					phoneServer.setName("phoneServer");
-					phoneServer.setValue(nroTelfServidor.replace("+51",""));
-					phoneServer.setType(String.class);
-
-					PropertyInfo phoneClient= new PropertyInfo();
-					phoneClient.setName("phoneClient");
-					phoneClient.setValue(numeroEnvio.replace("+51",""));
-					phoneClient.setType(String.class);
-
-					PropertyInfo pLatitud= new PropertyInfo();
-					pLatitud.setName("latitude");
-					pLatitud.setValue(latitud);
-					pLatitud.setType(Float.class);
-
-					PropertyInfo pLongitud= new PropertyInfo();
-					pLongitud.setName("longitude");
-					pLongitud.setValue(longitud);
-					pLongitud.setType(Float.class);
-
-
-					DateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-					Date date=new Date();
-
-					PropertyInfo registerDate= new PropertyInfo();
-					registerDate.setName("registerDate");
-					registerDate.setValue(dateFormat.format(date).toString());
-					registerDate.setType(String.class);
-
-
-					request.addProperty(phoneServer);
-					request.addProperty(phoneClient);
-					request.addProperty(pLatitud);
-					request.addProperty(pLongitud);
-					request.addProperty(registerDate);
-
-					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);
-					envelope.dotNet = true;
-
-					envelope.setOutputSoapObject(request);
-					HttpTransportSE transporte = new HttpTransportSE(URL_WS);
-
+				if(numeroEnvio==null)
+					numeroEnvio="";
+                if(numeroEnvio=="" || numeroEnvio.equalsIgnoreCase(numeroRetorno.trim())) {
 
                     Uri location = Uri.parse("geo:<"+latitud+">, <"+longitud+">?q=<"+latitud + ">, <" + longitud +">(Posición)");
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
@@ -205,18 +164,6 @@ public class ServerActivity extends Activity
 
                     if (isIntentSafe)
                         startActivity(mapIntent);
-
-					try{
-						StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
-						StrictMode.setThreadPolicy(policy);
-						transporte.call(SOAP_ACTION, envelope);
-						SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
-
-						Toast.makeText(getApplicationContext(), "Historial "+resultado_xml .toString(), Toast.LENGTH_SHORT).show();
-
-					}catch(Exception ex){
-						Toast.makeText(getApplicationContext(), "WS "+ex.getMessage(), Toast.LENGTH_SHORT).show();
-					}
 
 				}
 				else
@@ -248,7 +195,7 @@ public class ServerActivity extends Activity
         @Override
         protected void onPostExecute(Void aVoid){
             adapter.changeCursor(cursor);
-            Toast.makeText(getApplicationContext(), "Finalizada", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Finalizada", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -297,12 +244,101 @@ public class ServerActivity extends Activity
 
         @Override
         protected void onPostExecute(Void aVoid){
-          try{
-			  readSavePetition();
-		  }catch(Exception ex){
-			  Toast.makeText(getApplicationContext(), ""+ex.getMessage(), Toast.LENGTH_SHORT).show();
-			  
-		  }
+			try{
+            smsRespuesta = cgeneral.readSMS();
+            String[] respuesta = smsRespuesta.split("\\|");
+            String nroTelfServidor="";
+            if(respuesta.length == 4){
+                numeroRetorno = respuesta[0];
+                nroTelfServidor = respuesta[1];
+                latitud = respuesta[2];
+                longitud = respuesta[3];
+                if(numeroEnvio.trim().equalsIgnoreCase(numeroRetorno.trim())) {
+                   
+
+                    PropertyInfo phoneServer= new PropertyInfo();
+                    phoneServer.setName("phoneServer");
+                    phoneServer.setValue(nroTelfServidor.replace("+51",""));
+                    phoneServer.setType(String.class);
+
+                    PropertyInfo phoneClient= new PropertyInfo();
+                    phoneClient.setName("phoneClient");
+                    phoneClient.setValue(numeroEnvio.replace("+51",""));
+                    phoneClient.setType(String.class);
+
+                    PropertyInfo pLatitud= new PropertyInfo();
+                    pLatitud.setName("latitude");
+                    pLatitud.setValue(latitud);
+                    pLatitud.setType(Float.class);
+
+
+                    PropertyInfo pLongitud= new PropertyInfo();
+                    pLongitud.setName("longitude");
+                    pLongitud.setValue(longitud);
+                    pLongitud.setType(Float.class);
+
+
+                    DateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date=new Date();
+
+                    PropertyInfo registerDate= new PropertyInfo();
+                    registerDate.setName("registerDate");
+                    registerDate.setValue(dateFormat.format(date).toString());
+                    registerDate.setType(String.class);
+
+
+                    SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+                    request.addProperty(phoneServer);
+                    request.addProperty(phoneClient);
+                    request.addProperty(pLatitud);
+                    request.addProperty(pLongitud);
+                    request.addProperty(registerDate);
+
+                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                    envelope.dotNet = true;
+
+                    envelope.setOutputSoapObject(request);
+                    HttpTransportSE transporte = new HttpTransportSE(URL_WS, 2000);
+
+                    
+                    Uri location = Uri.parse("geo:<"+latitud+">, <"+longitud+">?q=<"+latitud + ">, <" + longitud +">(Posición)");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, location);
+
+                    PackageManager packageManager = getPackageManager();
+                    List<ResolveInfo> activities = packageManager.queryIntentActivities(mapIntent, 0);
+                    boolean isIntentSafe = activities.size() > 0;
+
+                    if (isIntentSafe)
+                        startActivity(mapIntent);
+
+                    try{
+                        StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                        StrictMode.setThreadPolicy(policy);
+                        transporte.call(SOAP_ACTION, envelope);
+                        SoapPrimitive resultado_xml =(SoapPrimitive)envelope.getResponse();
+
+                        Toast.makeText(getApplicationContext(), "Historial "+resultado_xml .toString(), Toast.LENGTH_SHORT).show();
+
+                    }catch(IOException ex){
+						
+                        Toast.makeText(getApplicationContext(), "WS "+ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }catch(XmlPullParserException ex){
+
+                        Toast.makeText(getApplicationContext(), "XML "+ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                     
+               }
+               else
+                  Toast.makeText(getApplicationContext(), "La respuesta no es del cliente solicitado", Toast.LENGTH_SHORT).show();
+           }
+            else
+              Toast.makeText(getApplicationContext(), ":( Se excedio el tiempo de respuesta no se puedo recuperar la posición ", Toast.LENGTH_SHORT).show();
+
+
+          }catch(Exception ex){
+              Toast.makeText(getApplicationContext(), ""+ex.getMessage(), Toast.LENGTH_SHORT).show();
+              
+          }
         }
     }
     

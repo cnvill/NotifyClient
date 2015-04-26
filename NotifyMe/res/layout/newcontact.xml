@@ -37,6 +37,6 @@
         android:layout_below="@+id/txtNombreContacto"
         android:ems="10"
         android:hint="Número"
-        android:inputType="phone"
+        android:inputType="number"
         android:maxLength="9"/>
 </RelativeLayout>
